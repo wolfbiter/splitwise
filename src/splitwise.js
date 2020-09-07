@@ -2,6 +2,8 @@ const { OAuth2 } = require('oauth');
 const querystring = require('querystring');
 const { promisify } = require('es6-promisify');
 const validate = require('validate.js');
+const fs = require('fs');
+const request = require('request');
 
 const R = require('./ramda.js');
 const { LOG_LEVELS, getLogger } = require('./logger.js');
@@ -278,14 +280,27 @@ const getOAuthRequestWrapper = (logger, oauth2) => {
    * @returns {Promise} The data from the endpoint
    */
   const oAuthRequestWrapper = (url, verb, data, accessToken) => {
-    console.log('oAuthRequestWrapper')
-    console.log({ url, verb, data, accessToken })
-    return
     if (!url) {
       return oAuthRequestWrapperFail('a URL must be provided');
     }
     if (!accessToken) {
       return oAuthRequestWrapperFail('an access token must be provided');
+    }
+
+    if (data.receipt) {
+      const formData = Object.assign({}, data);
+      formData.receipt = fs.createReadStream(data.receipt);
+
+      return new Promise((resolve, reject) => {
+        request.post({
+          url,
+          formData,
+          headers: { Authorization: oauth2.buildAuthHeader(accessToken) },
+        }, (err, response, body) => {
+          if (err) { reject(err); }
+          resolve(body);
+        });
+      });
     }
 
     return oAuthRequest(
