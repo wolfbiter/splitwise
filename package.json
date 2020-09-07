@@ -1,6 +1,6 @@
 {
   "name": "splitwise",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A JavaScript SDK for the Splitwise API.",
   "main": "src/index.js",
   "repository": {

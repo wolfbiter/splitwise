@@ -148,7 +148,8 @@ const METHODS = {
       'currency_code',
       'category_id',
       'users',
-      'split_equally'
+      'split_equally',
+      'receipt'
     ],
   },
   UPDATE_EXPENSE: {
@@ -277,6 +278,9 @@ const getOAuthRequestWrapper = (logger, oauth2) => {
    * @returns {Promise} The data from the endpoint
    */
   const oAuthRequestWrapper = (url, verb, data, accessToken) => {
+    console.log('oAuthRequestWrapper')
+    console.log({ url, verb, data, accessToken })
+    return
     if (!url) {
       return oAuthRequestWrapperFail('a URL must be provided');
     }
